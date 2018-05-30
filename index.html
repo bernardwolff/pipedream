@@ -1,0 +1,25 @@
+<html>
+<head>
+  <title>Pipe Dream</title>
+</head>
+<body>
+  <canvas id="canvas" width="1200" height="800"></canvas>
+  <button onclick="window.game.start()">start</button>
+  <script src="utils.js"></script>
+  <script src="piece_defs.js"></script>
+  <script src="Board.js"></script>
+  <script src="Piece.js"></script>
+  <script src="Game.js"></script>
+  <script>
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    window.game = new Game(ctx);
+    window.game.initialize();
+    canvas.addEventListener('click', event => {
+      var x = event.pageX - canvas.offsetLeft;
+      var y = event.pageY - canvas.offsetTop;
+      game.click(x, y);
+    }, false);
+  </script>
+</body>
+</html>

@@ -58,35 +58,42 @@ class Piece {
     ctx.closePath();
     ctx.fill();
   }
-  fillWithGoo(from_side, done_callback) {
-    var fill = (fill_lines, done_callback) => {
-      var startFill = (coord_index) => {
-
-        if (coord_index >= fill_lines.length - 1) {
-          done_callback(this.adjacent_entry_sides[from_side]);
-          return;
-        }
-
-        if (coord_index >= 0) {
-          var cur = fill_lines[coord_index];
-          var next = fill_lines[coord_index + 1];
-          //if (dist(cur[0], next[0]) > 5 || dist(cur[0], next[0]) > 5) {
-            //fill([a,b,c...], () => setTimeout(() => fillPolygon(...); startFill(coord_index + 1), 100));
-            //return;
-          //}
-
-          fillPolygon(this.ctx, cur, next, this.x, this.y, '#0f0');
-        }
-
-        setTimeout(() => startFill(coord_index + 1), 100);
-      };
-      startFill(0);
+  fillWithGoo(from_side, done) {
+    var fillSegment = (lineA, lineB, done) => {
+      var dst = lineDist(lineA, lineB);
+      if (dst > 5) {
+        console.log('distance between lines > 5: ' + dst);
+        console.log(JSON.stringify(lineA));
+        console.log(JSON.stringify(lineB));
+        var midLine = lineMid(lineA, lineB);
+        fillSegment(lineA, midLine, () => fillSegment(midLine, lineB, done));
+      } else {
+        console.log('>>>> filling ' + new Date().getTime());
+        console.log(JSON.stringify(lineA));
+        console.log(JSON.stringify(lineB));
+        console.log('++++ done filling');
+        fillPolygon(this.ctx, lineA, lineB, this.x, this.y, '#0f0');
+        console.log('next should be at ' + ((new Date().getTime()) + 50));
+        setTimeout(done, 50);
+      }
     };
     var fill_lines = this.fill_lines[from_side];
+    var fill = (coord_index) => {
+      if (coord_index >= fill_lines.length - 1) {
+        done(this.adjacent_entry_sides[from_side]);
+        return;
+      }
+
+      var cur = fill_lines[coord_index];
+      var next = fill_lines[coord_index + 1];
+
+      fillSegment(cur, next, () => fill(coord_index + 1));
+    };
+
     if (!fill_lines || fill_lines.length === 0) {
       console.log(`${this.name} has no entry from ${from_side}`);
       return;
     }
-    fill(fill_lines, done_callback);
+    fill(0);
   }
 }

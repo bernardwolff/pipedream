@@ -22,26 +22,39 @@ class Board {
     }
   }
   draw() {
-    var board_width = this.cell_size * this.num_cols;
-    var board_height = this.cell_size * this.num_rows;
+    this.board_width = this.cell_size * this.num_cols;
+    this.board_height = this.cell_size * this.num_rows;
 
     // draw the background
     ctx.fillStyle = '#d2d2d2';
-    ctx.fillRect(this.x_offset, this.y_offset, board_width, board_height);
+    ctx.fillRect(this.x_offset, this.y_offset, this.board_width, this.board_height);
 
     // draw the grid
     ctx.lineWidth = 2;
     for (var i = 1; i < this.num_cols; i++) {
       var x = this.x_offset + i * this.cell_size;
-      ctx.strokeStyle = '#fff';
-      ctx.beginPath();
-      ctx.moveTo(x-1, this.y_offset - 5);
-      ctx.lineTo(x-1, this.y_offset + board_height + 5);
-      ctx.stroke();
       ctx.strokeStyle = '#999';
       ctx.beginPath();
       ctx.moveTo(x+1, this.y_offset - 5);
-      ctx.lineTo(x+1, this.y_offset + board_height + 5);
+      ctx.lineTo(x+1, this.y_offset + this.board_height + 5);
+      ctx.stroke();
+    }
+
+    for (var i = 1; i < this.num_rows; i++) {
+      var y = this.y_offset + i * this.cell_size;
+      ctx.strokeStyle = '#999';
+      ctx.beginPath();
+      ctx.moveTo(this.x_offset, y+1);
+      ctx.lineTo(this.x_offset + this.board_width + 5, y+1);
+      ctx.stroke();
+    }
+
+    for (var i = 1; i < this.num_cols; i++) {
+      var x = this.x_offset + i * this.cell_size;
+      ctx.strokeStyle = '#fff';
+      ctx.beginPath();
+      ctx.moveTo(x-1, this.y_offset - 5);
+      ctx.lineTo(x-1, this.y_offset + this.board_height + 5);
       ctx.stroke();
     }
 
@@ -50,19 +63,14 @@ class Board {
       ctx.strokeStyle = '#fff';
       ctx.beginPath();
       ctx.moveTo(this.x_offset, y-1);
-      ctx.lineTo(this.x_offset + board_width + 5, y-1);
-      ctx.stroke();
-      ctx.strokeStyle = '#999';
-      ctx.beginPath();
-      ctx.moveTo(this.x_offset, y+1);
-      ctx.lineTo(this.x_offset + board_width + 5, y+1);
+      ctx.lineTo(this.x_offset + this.board_width + 5, y-1);
       ctx.stroke();
     }
 
     // draw the border
     ctx.strokeStyle = '#ff0000';
     ctx.lineWidth = 5;
-    ctx.strokeRect(this.x_offset-3, this.y_offset-3, board_width+5, board_height+5);
+    ctx.strokeRect(this.x_offset-3, this.y_offset-3, this.board_width+5, this.board_height+5);
 
     // reset the line width
     ctx.lineWidth = 1;
@@ -157,5 +165,9 @@ class Board {
         // if not, splurge
       }
     });
+  }
+  isWithinBounds(x, y) {
+    return x >= this.x_offset && x <= this.x_offset + this.board_width
+      && y >= this.y_offset && y <= this.y_offset + this.board_height;
   }
 }

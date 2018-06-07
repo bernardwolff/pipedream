@@ -43,6 +43,10 @@ class Game {
   }
   click(x, y) {
     console.log('clicked ' + x + ', ' + y);
+    if (!this.board.isWithinBounds(x, y)) {
+      console.log('not on the board');
+      return;
+    }
     var piece = this.getNextPiece();
     this.board.placeGamePiece(piece, x, y);
   }

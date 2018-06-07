@@ -51,15 +51,15 @@ class Piece {
     // draw the pipe
     ctx.fillStyle = '#000';
     ctx.beginPath();
-    ctx.moveTo(this.pipe_polygon[0].x + x + 1, this.pipe_polygon[0].y + y + 1);
+    ctx.moveTo(this.pipe_polygon[0].x + x, this.pipe_polygon[0].y + y);
     for (var i = 1; i < this.pipe_polygon.length; i++) {
-      ctx.lineTo(this.pipe_polygon[i].x + x + 1, this.pipe_polygon[i].y + y + 1);
+      ctx.lineTo(this.pipe_polygon[i].x + x, this.pipe_polygon[i].y + y);
     }
     ctx.closePath();
     ctx.fill();
   }
   fillWithGoo(from_side, done_callback) {
-    var fill = fill_lines => {
+    var fill = (fill_lines, done_callback) => {
       var startFill = (coord_index) => {
 
         if (coord_index >= fill_lines.length - 1) {
@@ -70,14 +70,12 @@ class Piece {
         if (coord_index >= 0) {
           var cur = fill_lines[coord_index];
           var next = fill_lines[coord_index + 1];
-          ctx.fillStyle = '#0f0';
-          ctx.beginPath();
-          ctx.moveTo(cur[0].x + this.x + 1, cur[0].y + this.y + 1);
-          ctx.lineTo(cur[1].x + this.x + 1, cur[1].y + this.y + 1);
-          ctx.lineTo(next[1].x + this.x + 1, next[1].y + this.y + 1);
-          ctx.lineTo(next[0].x + this.x + 1, next[0].y + this.y + 1);
-          ctx.closePath();
-          ctx.fill();
+          //if (dist(cur[0], next[0]) > 5 || dist(cur[0], next[0]) > 5) {
+            //fill([a,b,c...], () => setTimeout(() => fillPolygon(...); startFill(coord_index + 1), 100));
+            //return;
+          //}
+
+          fillPolygon(this.ctx, cur, next, this.x, this.y, '#0f0');
         }
 
         setTimeout(() => startFill(coord_index + 1), 100);
@@ -85,10 +83,10 @@ class Piece {
       startFill(0);
     };
     var fill_lines = this.fill_lines[from_side];
-    if (!fill_lines || fill_lines.length < 2) {
+    if (!fill_lines || fill_lines.length === 0) {
       console.log(`${this.name} has no entry from ${from_side}`);
       return;
     }
-    fill(fill_lines);
+    fill(fill_lines, done_callback);
   }
 }
